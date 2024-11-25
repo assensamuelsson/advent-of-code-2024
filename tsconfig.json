@@ -1,0 +1,15 @@
+{
+  "extends": "@bonniernews/tsconfig",
+  "compilerOptions": {
+    "rootDir": "./",
+    "typeRoots": [
+      "@types",
+      "node_modules/@types"
+    ],
+    "outDir": "./dist",
+  },
+  "include": [
+    "main.ts",
+    "src"
+  ]
+}

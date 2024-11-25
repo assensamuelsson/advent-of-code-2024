@@ -1,0 +1,25 @@
+{
+  "name": "advent-of-code-2024",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.ts",
+  "scripts": {
+    "day": "node --import=tsx/esm main.ts",
+    "test": "node --import=tsx/esm --test ./**/test.ts"
+  },
+  "engines": {
+    "node": ">= 23"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@bonniernews/eslint-config": "^1.2.0",
+    "@bonniernews/tsconfig": "^0.0.2",
+    "@types/node": "^22.9.3",
+    "eslint": "^8.57.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

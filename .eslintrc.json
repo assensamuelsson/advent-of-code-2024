@@ -1,0 +1,9 @@
+{
+  "root": true,
+  "extends": [
+    "@bonniernews/eslint-config/typescript"
+  ],
+  "rules": {
+    "no-console": "off"
+  }
+}
