@@ -1,6 +1,7 @@
 {
   "extends": "@bonniernews/tsconfig",
   "compilerOptions": {
+    "lib": ["ES2023"],
     "rootDir": "./",
     "typeRoots": [
       "@types",
