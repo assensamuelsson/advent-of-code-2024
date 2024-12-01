@@ -34,10 +34,11 @@ describe("Day1", () => {
   it("calculates occurrence correctly", () => {
     const parsed = parse(input);
 
-    assert.strictEqual(occurrences(parsed[0][0], parsed[1]), 3);
-    assert.strictEqual(occurrences(parsed[0][1], parsed[1]), 1);
-    assert.strictEqual(occurrences(parsed[0][2], parsed[1]), 0);
-    assert.strictEqual(occurrences(parsed[0][4], parsed[1]), 3);
-    assert.strictEqual(occurrences(parsed[0][5], parsed[1]), 3);
+    assert.deepStrictEqual(occurrences(parsed[1]), {
+      3: 3,
+      4: 1,
+      5: 1,
+      9: 1,
+    });
   });
 });

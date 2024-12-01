@@ -9,8 +9,9 @@ export function part1(input: string) {
 
 export function part2(input: string) {
   const parsed = parse(input);
+  const occ = occurrences(parsed[1]);
   const result = parsed[0]
-    .reduce((acc, curr) => acc + curr * occurrences(curr, parsed[1]), 0);
+    .reduce((sum, value) => sum + value * (occ[value] ?? 0), 0);
 
   console.log(result);
 }
@@ -46,8 +47,9 @@ export function diff(lists: Lists): List {
   return diffs;
 }
 
-export function occurrences(value: Element, list: List): number {
-  return list
-    .filter((v) => v === value)
-    .reduce((acc) => acc + 1, 0);
+export function occurrences(list: List): Record<Element, number> {
+  return list.reduce((obj, value) => {
+    obj[value] = (obj[value] ?? 0) + 1;
+    return obj;
+  }, {} as Record<Element, number>);
 }
