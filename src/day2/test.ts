@@ -1,0 +1,49 @@
+import assert from "node:assert";
+import { describe, it } from "node:test";
+import { readFileSync } from "node:fs";
+
+import { parse, isSafe, isSafeWithDampening } from "./src";
+
+const input = readFileSync(`${import.meta.dirname}/example.txt`, { encoding: "utf8" });
+
+describe("Day2", () => {
+  it("parses correctly", () => {
+    assert.deepStrictEqual(parse(input), [
+      [ 7, 6, 4, 2, 1 ],
+      [ 1, 2, 7, 8, 9 ],
+      [ 9, 7, 6, 2, 1 ],
+      [ 1, 3, 2, 4, 5 ],
+      [ 8, 6, 4, 4, 1 ],
+      [ 1, 3, 6, 7, 9 ],
+    ]);
+  });
+
+  it("calculates isSafe correctly", () => {
+    const parsed = parse(input);
+
+    assert(isSafe(parsed[0]));
+    assert(!isSafe(parsed[1]));
+    assert(!isSafe(parsed[2]));
+    assert(!isSafe(parsed[3]));
+    assert(!isSafe(parsed[4]));
+    assert(isSafe(parsed[5]));
+  });
+
+  it("calculates isSafe with dampening correctly", () => {
+    const parsed = parse(input);
+
+    assert(isSafeWithDampening(parsed[0]));
+    assert(!isSafeWithDampening(parsed[1]));
+    assert(!isSafeWithDampening(parsed[2]));
+    assert(isSafeWithDampening(parsed[3]));
+    assert(isSafeWithDampening(parsed[4]));
+    assert(isSafeWithDampening(parsed[5]));
+    assert(isSafeWithDampening([ 99, 1, 2, 3, 4 ]));
+    assert(!isSafeWithDampening([ 99, 99, 1, 2, 3, 4 ]));
+    assert(isSafeWithDampening([ 0, 99, 1, 2, 3, 4 ]));
+    assert(!isSafeWithDampening([ 0, 99, 99, 1, 2, 3, 4 ]));
+    assert(isSafeWithDampening([ 0, 1, 2, 3, 4, 99 ]));
+    assert(!isSafeWithDampening([ 0, 1, 2, 3, 4, 99, 200 ]));
+    assert(!isSafeWithDampening([ 0, 1, 2, 3, 4, 99, 99 ]));
+  });
+});

@@ -1,3 +1,6 @@
+# AOC input data
+*.txt
+
 # Logs
 logs
 *.log
