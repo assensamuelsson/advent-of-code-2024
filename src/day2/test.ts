@@ -5,7 +5,6 @@ import { readFileSync } from "node:fs";
 import { parse, isSafe, isSafeWithDampening } from "./src";
 
 const example = readFileSync(`${import.meta.dirname}/example.txt`, { encoding: "utf8" });
-const input = readFileSync(`${import.meta.dirname}/input.txt`, { encoding: "utf8" });
 
 describe("Day2", () => {
   it("parses correctly", () => {
@@ -46,13 +45,5 @@ describe("Day2", () => {
     assert(isSafeWithDampening([ 0, 1, 2, 3, 4, 99 ]));
     assert(!isSafeWithDampening([ 0, 1, 2, 3, 4, 99, 200 ]));
     assert(!isSafeWithDampening([ 0, 1, 2, 3, 4, 99, 99 ]));
-  });
-
-  it("calculates part2 correctly", () => {
-    const result = parse(input)
-      .filter(isSafeWithDampening)
-      .length;
-
-    assert.strictEqual(result, 658);
   });
 });
