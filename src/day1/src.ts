@@ -24,7 +24,6 @@ export function parse(input: string): Lists {
   const left = [];
   const right = [];
   for (const row of input.split("\n")) {
-    if (row.length === 0) continue; // Last line
     const [ l, r ] = row.split(" ").filter(Boolean);
     left.push(Number(l));
     right.push(Number(r));
