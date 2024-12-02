@@ -41,6 +41,5 @@ export function isSafe(report: Report): boolean {
 
 export function isSafeWithDampening(report: Report): boolean {
   return report
-    .map((_, i) => report.slice(0, i).concat(report.slice(i + 1)))
-    .some(isSafe);
+    .some((_, i) => isSafe(report.slice(0, i).concat(report.slice(i + 1))));
 }
