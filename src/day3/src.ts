@@ -9,7 +9,7 @@ type Instruction<T extends InstructionType> = T extends "mul" ? BaseInstruction<
 
 export function part1(input: string) {
   const result = findInstructions(input)
-    .filter((instruction): instruction is Instruction<"mul"> => instruction.instruction === "mul")
+    .filter((i): i is Instruction<"mul"> => i.instruction === "mul")
     .map(({ n1, n2 }) => n1 * n2)
     .reduce((acc, curr) => acc + curr);
 
