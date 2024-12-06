@@ -4,8 +4,8 @@
   "description": "",
   "main": "main.ts",
   "scripts": {
-    "day": "node --import=tsx/esm main.ts",
-    "test": "node --import=tsx/esm --test ./**/test.ts"
+    "day": "tsx main.ts",
+    "test": "tsx --test"
   },
   "engines": {
     "node": ">= 23"
