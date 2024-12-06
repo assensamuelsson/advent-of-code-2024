@@ -5,7 +5,8 @@
   "main": "main.ts",
   "scripts": {
     "day": "tsx main.ts",
-    "test": "tsx --test"
+    "test": "tsx --test",
+    "test:watch": "tsx --test --watch"
   },
   "engines": {
     "node": ">= 23"
