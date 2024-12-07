@@ -41,7 +41,8 @@ export function parse(input: string): Calibration[] {
     });
 }
 
-export function isValidCalibration({ testValue, numbers }: Calibration, operations: Operation[]): boolean {
+export function isValidCalibration(calibration: Calibration, operations: Operation[]): boolean {
+  const { testValue, numbers } = calibration;
   if (numbers.length === 1) return numbers[0] === testValue;
   if (numbers[0] > testValue) return false;
 
