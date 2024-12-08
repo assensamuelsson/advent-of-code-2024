@@ -1,9 +1,12 @@
 import { uniquePairs } from "../utils/array";
 import { vAdd, vSub, type Vec } from "../utils/math";
 
-type Map = {
+type GridSize = {
   rows: number,
   cols: number,
+};
+
+type Map = GridSize & {
   antennas: Record<string, Vec[]>
 };
 
@@ -53,7 +56,7 @@ export function antinodes(a1: Vec, a2: Vec): Vec[] {
   return [ vAdd(a1, vSub(a1, a2)), vAdd(a2, vSub(a2, a1)) ];
 }
 
-export function antinodesResonantHarmonics(a1: Vec, a2: Vec, { cols, rows }: {cols: number, rows: number }): Vec[] {
+export function antinodesResonantHarmonics(a1: Vec, a2: Vec, { cols, rows }: GridSize): Vec[] {
   const result: Vec[] = [ a1, a2 ];
 
   let dir = vSub(a1, a2);
@@ -81,10 +84,10 @@ export function allAntinodes(antennas: Vec[]): Vec[] {
   return result.flat();
 }
 
-export function allAntinodesResonantHarmonics(antennas: Vec[], map: Map): Vec[] {
+export function allAntinodesResonantHarmonics(antennas: Vec[], bounds: GridSize): Vec[] {
   const result = [];
   for (const [ a1, a2 ] of uniquePairs(antennas)) {
-    result.push(antinodesResonantHarmonics(a1, a2, map));
+    result.push(antinodesResonantHarmonics(a1, a2, bounds));
   }
   return result.flat();
 }
