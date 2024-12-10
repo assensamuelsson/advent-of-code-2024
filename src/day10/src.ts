@@ -54,16 +54,15 @@ export function parse(input: string): Map {
 
 export function nHikingTrails(p: Point, { heightMap, rows, cols }: Pick<Map, "heightMap" | "cols" | "rows">, distinct: boolean, found: Set<string> = new Set()): number {
   const currentHeight = heightMap[p[1]][p[0]];
-  if (currentHeight === 9) {
-    if (distinct) return 1;
+  const foundKey = `${p[0]},${p[1]}`;
 
-    const foundKey = `${p[0]},${p[1]}`;
-    if (found.has(foundKey)) {
-      return 0;
-    } else {
-      found.add(foundKey);
-      return 1;
-    }
+  if (currentHeight === 9 && distinct) {
+    return 1;
+  } else if (currentHeight === 9 && found.has(foundKey)) {
+    return 0;
+  } else if (currentHeight === 9) {
+    found.add(foundKey);
+    return 1;
   }
 
   const dirs = [
@@ -74,8 +73,6 @@ export function nHikingTrails(p: Point, { heightMap, rows, cols }: Pick<Map, "he
   ]
     .filter(([ x, y ]) => x >= 0 && x < cols && y >= 0 && y < rows)
     .filter(([ x, y ]) => heightMap[y][x] === currentHeight + 1);
-
-  if (dirs.length === 0) return 0;
 
   return dirs
     .reduce((acc, point) => acc + nHikingTrails(point, { heightMap, rows, cols }, distinct, found), 0);
