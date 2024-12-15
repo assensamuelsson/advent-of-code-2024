@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 
-import { crossProduct, vAdd, vSub } from "./index";
+import { crossProduct, vAdd, vSub, vMod } from "./index";
 
 describe("Math utils", () => {
   describe("crossProduct", () => {
@@ -16,6 +16,10 @@ describe("Math utils", () => {
 
     it("subtracts vecs correctly", () => {
       assert.deepStrictEqual(vSub([ 1, 2, 3 ], [ 2, 3, 4 ]), [ -1, -1, -1 ]);
+    });
+
+    it("mods vecs correctly", () => {
+      assert.deepStrictEqual(vMod([ 5, 6, 75 ], [ 2, 2, 2 ]), [ 1, 0, 1 ]);
     });
   });
 });
