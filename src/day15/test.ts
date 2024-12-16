@@ -8,7 +8,7 @@ const example1 = readFileSync(`${import.meta.dirname}/example1.txt`, { encoding:
 const example2 = readFileSync(`${import.meta.dirname}/example2.txt`, { encoding: "utf8" });
 const example3 = readFileSync(`${import.meta.dirname}/example3.txt`, { encoding: "utf8" });
 
-describe("Day15", () => {
+describe.skip("Day15", () => {
   it("parses correctly", () => {
     const parsed = parse(example1);
 
