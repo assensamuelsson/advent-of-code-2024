@@ -142,8 +142,8 @@ export function findInitialAValue(program: Program): bigint {
   const revProgram = program.toReversed();
 
   while (true) {
-    // const output = runProgram(program, { A, B: 0n, C: 0n });
-    const output = runProgram2(A);
+    const output = runProgram(program, { A, B: 0n, C: 0n });
+    // const output = runProgram2(A); // faster but fails on test
     if (equals(output, program)) {
       break;
     }

@@ -8,7 +8,7 @@ const example1 = readFileSync(`${import.meta.dirname}/example1.txt`, { encoding:
 const example2 = readFileSync(`${import.meta.dirname}/example2.txt`, { encoding: "utf8" });
 
 function createRegister():Register {
-  return { A: 11, B: 12, C: 13 };
+  return { A: 11n, B: 12n, C: 13n };
 }
 
 describe("Day17", () => {
@@ -16,31 +16,31 @@ describe("Day17", () => {
     const { register, program } = parse(example1);
 
     assert.deepStrictEqual(register, {
-      A: 729,
-      B: 0,
-      C: 0,
+      A: 729n,
+      B: 0n,
+      C: 0n,
     });
 
-    assert.deepStrictEqual(program, [ 0, 1, 5, 4, 3, 0 ]);
+    assert.deepStrictEqual(program, [ 0n, 1n, 5n, 4n, 3n, 0n ]);
   });
 
   it("calculates combo operand correctly", () => {
     const register = createRegister();
 
-    assert.strictEqual(combo(0, register), 0);
-    assert.strictEqual(combo(1, register), 1);
-    assert.strictEqual(combo(2, register), 2);
-    assert.strictEqual(combo(3, register), 3);
-    assert.strictEqual(combo(4, register), register.A);
-    assert.strictEqual(combo(5, register), register.B);
-    assert.strictEqual(combo(6, register), register.C);
-    assert.throws(() => combo(7, register));
+    assert.strictEqual(combo(0n, register), 0n);
+    assert.strictEqual(combo(1n, register), 1n);
+    assert.strictEqual(combo(2n, register), 2n);
+    assert.strictEqual(combo(3n, register), 3n);
+    assert.strictEqual(combo(4n, register), register.A);
+    assert.strictEqual(combo(5n, register), register.B);
+    assert.strictEqual(combo(6n, register), register.C);
+    assert.throws(() => combo(7n, register));
   });
 
   it("calculates adv instruction correctly", () => {
     const register = createRegister();
-    const input = 1;
-    const expected = Math.floor(register.A / Math.pow(2, combo(input, register)));
+    const input = 1n;
+    const expected = register.A / 2n ** combo(input, register);
 
     const nextIP = INSTRUCTIONS[0](input, register, []);
 
@@ -50,7 +50,7 @@ describe("Day17", () => {
 
   it("calculates bxl instruction correctly", () => {
     const register = createRegister();
-    const input = 6;
+    const input = 6n;
     const expected = register.B ^ input;
 
     const nextIP = INSTRUCTIONS[1](input, register, []);
@@ -61,8 +61,8 @@ describe("Day17", () => {
 
   it("calculates bst instruction correctly", () => {
     const register = createRegister();
-    const input = 4;
-    const expected = register.A % 8;
+    const input = 4n;
+    const expected = register.A % 8n;
 
     const nextIP = INSTRUCTIONS[2](input, register, []);
 
@@ -73,16 +73,16 @@ describe("Day17", () => {
   it("calculates jnx instruction correctly", () => {
     const register = createRegister();
 
-    register.A = 0;
-    assert.strictEqual(INSTRUCTIONS[3](6, register, []), undefined);
+    register.A = 0n;
+    assert.strictEqual(INSTRUCTIONS[3](6n, register, []), undefined);
 
-    register.A = 1;
-    assert.strictEqual(INSTRUCTIONS[3](6, register, []), 6);
+    register.A = 1n;
+    assert.strictEqual(INSTRUCTIONS[3](6n, register, []), 6n);
   });
 
   it("calculates bxc instruction correctly", () => {
     const register = createRegister();
-    const input = 4;
+    const input = 4n;
     const expected = register.B ^ register.C;
 
     const nextIP = INSTRUCTIONS[4](input, register, []);
@@ -93,9 +93,9 @@ describe("Day17", () => {
 
   it("calculates out instruction correctly", () => {
     const register = createRegister();
-    const input = 4;
-    const expected = combo(input, register) % 8;
-    const output: number[] = [];
+    const input = 4n;
+    const expected = combo(input, register) % 8n;
+    const output: bigint[] = [];
 
     const nextIP = INSTRUCTIONS[5](input, register, output);
 
@@ -105,8 +105,8 @@ describe("Day17", () => {
 
   it("calculates bdv instruction correctly", () => {
     const register = createRegister();
-    const input = 1;
-    const expected = Math.floor(register.A / Math.pow(2, combo(input, register)));
+    const input = 1n;
+    const expected = register.A / 2n ** combo(input, register);
 
     const nextIP = INSTRUCTIONS[6](input, register, []);
 
@@ -116,8 +116,8 @@ describe("Day17", () => {
 
   it("calculates bdv instruction correctly", () => {
     const register = createRegister();
-    const input = 1;
-    const expected = Math.floor(register.A / Math.pow(2, combo(input, register)));
+    const input = 1n;
+    const expected = register.A / 2n ** combo(input, register);
 
     const nextIP = INSTRUCTIONS[6](input, register, []);
 
@@ -127,8 +127,8 @@ describe("Day17", () => {
 
   it("calculates cdv instruction correctly", () => {
     const register = createRegister();
-    const input = 1;
-    const expected = Math.floor(register.A / Math.pow(2, combo(input, register)));
+    const input = 1n;
+    const expected = register.A / 2n ** combo(input, register);
 
     const nextIP = INSTRUCTIONS[7](input, register, []);
 
@@ -137,63 +137,57 @@ describe("Day17", () => {
   });
 
   it("runs program example 1 correctly", () => {
-    const register: Register = { A: 0, B: 0, C: 9 };
-    const program: Program = [ 2, 6 ];
-    const output: number[] = [];
+    const register: Register = { A: 0n, B: 0n, C: 9n };
+    const program: Program = [ 2n, 6n ];
 
-    runProgram(program, register, output);
+    runProgram(program, register);
 
-    assert.strictEqual(register.B, 1);
+    assert.strictEqual(register.B, 1n);
   });
 
   it("runs program example 2 correctly", () => {
-    const register: Register = { A: 10, B: 0, C: 0 };
-    const program: Program = [ 5, 0, 5, 1, 5, 4 ];
-    const output: number[] = [];
+    const register: Register = { A: 10n, B: 0n, C: 0n };
+    const program: Program = [ 5n, 0n, 5n, 1n, 5n, 4n ];
 
-    runProgram(program, register, output);
+    const output = runProgram(program, register);
 
-    assert.deepStrictEqual(output, [ 0, 1, 2 ]);
+    assert.deepStrictEqual(output, [ 0n, 1n, 2n ]);
   });
 
   it("runs program example 3 correctly", () => {
-    const register: Register = { A: 2024, B: 0, C: 0 };
-    const program: Program = [ 0, 1, 5, 4, 3, 0 ];
-    const output: number[] = [];
+    const register: Register = { A: 2024n, B: 0n, C: 0n };
+    const program: Program = [ 0n, 1n, 5n, 4n, 3n, 0n ];
 
-    runProgram(program, register, output);
+    const output = runProgram(program, register);
 
-    assert.deepStrictEqual(output, [ 4, 2, 5, 6, 7, 7, 7, 7, 3, 1, 0 ]);
-    assert.strictEqual(register.A, 0);
+    assert.deepStrictEqual(output, [ 4n, 2n, 5n, 6n, 7n, 7n, 7n, 7n, 3n, 1n, 0n ]);
+    assert.strictEqual(register.A, 0n);
   });
 
   it("runs program example 4 correctly", () => {
-    const register: Register = { A: 0, B: 29, C: 0 };
-    const program: Program = [ 1, 7 ];
-    const output: number[] = [];
+    const register: Register = { A: 0n, B: 29n, C: 0n };
+    const program: Program = [ 1n, 7n ];
 
-    runProgram(program, register, output);
+    runProgram(program, register);
 
-    assert.strictEqual(register.B, 26);
+    assert.strictEqual(register.B, 26n);
   });
 
   it("runs program example 5 correctly", () => {
-    const register: Register = { A: 0, B: 2024, C: 43690 };
-    const program: Program = [ 4, 0 ];
-    const output: number[] = [];
+    const register: Register = { A: 0n, B: 2024n, C: 43690n };
+    const program: Program = [ 4n, 0n ];
 
-    runProgram(program, register, output);
+    runProgram(program, register);
 
-    assert.strictEqual(register.B, 44354);
+    assert.strictEqual(register.B, 44354n);
   });
 
   it("runs parsed example correctly", () => {
     const { program, register } = parse(example1);
-    const output: number[] = [];
 
-    runProgram(program, register, output);
+    const output = runProgram(program, register);
 
-    assert.deepStrictEqual(output, [ 4, 6, 3, 5, 6, 3, 5, 2, 1, 0 ]);
+    assert.deepStrictEqual(output, [ 4n, 6n, 3n, 5n, 6n, 3n, 5n, 2n, 1n, 0n ]);
   });
 
   it("brute force finds A initial value to product copy correctly for example 2", () => {
@@ -201,6 +195,6 @@ describe("Day17", () => {
 
     const A = findInitialAValue(program);
 
-    assert.strictEqual(A, 117440);
+    assert.strictEqual(A, 117440n);
   });
 });
