@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 
-import { product, uniquePairs } from "./index";
+import { product, uniquePairs, equals } from "./index";
 
 describe("Array utils", () => {
   describe("product", () => {
@@ -26,6 +26,14 @@ describe("Array utils", () => {
           i++;
         }
       });
+    });
+  });
+
+  describe("equals", () => {
+    it("calculates equals correctly", () => {
+      assert(equals([ 1, 2, 3 ], [ 1, 2, 3 ]));
+      assert(!equals([ 1, 2, 3 ], [ 1, 2, 4 ]));
+      assert(!equals([ 1, 2, 3 ], [ 1, 2, 3, 4 ]));
     });
   });
 });
