@@ -1,4 +1,5 @@
 import { equals } from "../utils/array";
+import { MinHeapPriorityQueue, MinPriorityQueue } from "../utils/data-structures";
 
 type Vec2d = [number, number];
 
@@ -71,13 +72,13 @@ export function aStar(start: Vec2d, end: Vec2d, obstacles: Set<string>): Vec2d[]
   }
 
   const startKey = posKey(start);
-  const openSet = [ startKey ];
+  const openSet: MinPriorityQueue<string> = new MinHeapPriorityQueue<string>((k) => fScore[k], (k) => k);
+  openSet.add(startKey);
   gScore[startKey] = 0;
   fScore[startKey] = manhattanDistance(start, end);
   cameFrom[startKey] = null;
 
-  while (openSet.length) {
-    openSet.sort((a, b) => fScore[b] - fScore[a]);
+  while (openSet.size) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const currentKey = openSet.pop()!;
     const currentPos = pos[currentKey];
@@ -108,8 +109,8 @@ export function aStar(start: Vec2d, end: Vec2d, obstacles: Set<string>): Vec2d[]
         cameFrom[neighborKey] = currentKey;
         gScore[neighborKey] = tentativeGScore;
         fScore[neighborKey] = tentativeGScore + manhattanDistance(neighbor, end);
-        if (!openSet.includes(neighborKey)) {
-          openSet.push(neighborKey);
+        if (!openSet.has(neighborKey)) {
+          openSet.add(neighborKey);
         }
       }
     }
