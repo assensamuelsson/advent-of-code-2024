@@ -33,7 +33,9 @@ fn part2(input: &str) {
         .lines()
         .map(|s| s.parse::<u64>().unwrap())
         .for_each(|secret| {
-            let result: Vec<i32> = (0..2000)
+            let mut first_found_map: HashMap<u64, i32> = HashMap::new();
+
+            (0..2000)
                 .scan(secret, |state, i| {
                     if i == 0 {
                         Some(secret)
@@ -43,17 +45,16 @@ fn part2(input: &str) {
                     }
                 })
                 .map(|digit| (digit % 10) as i32)
-                .collect();
-
-            let mut first_found_map: HashMap<u64, i32> = HashMap::new();
-            for w in result.windows(5) {
-                let diffs: Vec<i32> = w.iter().tuple_windows().map(|(a, b)| b - a).collect();
-                let mut hasher = DefaultHasher::new();
-                diffs.hash(&mut hasher);
-                let key = hasher.finish();
-                let value = w[w.len() - 1];
-                first_found_map.entry(key).or_insert(value);
-            }
+                .tuple_windows()
+                .for_each(|(a, b, c, d, e)| {
+                    let mut hasher = DefaultHasher::new();
+                    hasher.write_i32(b - a);
+                    hasher.write_i32(c - b);
+                    hasher.write_i32(c - d);
+                    hasher.write_i32(e - d);
+                    let key = hasher.finish();
+                    first_found_map.entry(key).or_insert(e);
+                });
 
             for (key, value) in first_found_map {
                 *map.entry(key).or_insert(0) += value;
