@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use std::collections::hash_map::DefaultHasher;
 use std::collections::HashMap;
-use std::hash::{Hash, Hasher};
+use std::hash::Hasher;
 use std::time::Instant;
 
 fn main() {
