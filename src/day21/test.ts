@@ -2,7 +2,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { readFileSync } from "node:fs";
 
-import { program, numericKeypad, generatePermutations, directionalKeypad, finalProgramLength } from "./src";
+import { program, numericKeypad, generatePermutations, directionalKeypad, finalProgramLength, toState, stateLength, evolve } from "./src";
 
 const example = readFileSync(`${import.meta.dirname}/example.txt`, { encoding: "utf8" });
 
@@ -31,6 +31,35 @@ describe("Day21", () => {
   });
 
   it("programs finalProgram correctly", () => {
-    assert.strictEqual(finalProgramLength("029A"), "<vA<AA>>^AvAA<^A>A<v<A>>^AvA^A<vA>^A<v<A>^A>AAvA^A<v<A>A>^AAAvA<^A>A".length);
+    assert.strictEqual(finalProgramLength("029A").v, "<vA<AA>>^AvAA<^A>A<v<A>>^AvA^A<vA>^A<v<A>^A>AAvA^A<v<A>A>^AAAvA<^A>A".length);
+  });
+
+  it("calculates to state correctly", () => {
+    const result = toState("<<vA>>^A<A>AvA<^AA>A<vAAA>^A");
+
+    assert.deepStrictEqual(result, { "<<vA": 1, ">>^A": 1, "<A": 1, ">A": 2, vA: 1, "<^A": 1, A: 3, "<vA": 1, ">^A": 1 });
+  });
+
+  it("calculates state length correctly", () => {
+    const p = "<<vA>>^A<A>AvA<^AA>A<vAAA>^A";
+    const len = stateLength(toState(p));
+
+    assert.strictEqual(len, p.length);
+  });
+
+  it("evolves state correctly", () => {
+    assert.deepStrictEqual(evolve({ A: 1 }), { A: 1 });
+    assert.deepStrictEqual(evolve({ ">A": 1 }), { vA: 1, "^A": 1 });
+    assert.deepStrictEqual(evolve({ ">^A": 1 }), { vA: 1, "<^A": 1, ">A": 1 });
+    assert.deepStrictEqual(evolve({ ">>^A": 1 }), { vA: 1, A: 1, "<^A": 1, ">A": 1 });
+    assert.deepStrictEqual(evolve({ "^A": 1 }), { "<A": 1, ">A": 1 });
+    assert.deepStrictEqual(evolve({ "<A": 1 }), { "v<<A": 1, ">>^A": 1 });
+    assert.deepStrictEqual(evolve({ "<^A": 1 }), { "v<<A": 1, ">^A": 1, ">A": 1 });
+    assert.deepStrictEqual(evolve({ "<vA": 1 }), { "v<<A": 1, ">A": 1, ">^A": 1 });
+    assert.deepStrictEqual(evolve({ vA: 1 }), { "<vA": 1, ">^A": 1 });
+    assert.deepStrictEqual(evolve({ "v<<A": 1 }), { "<vA": 1, "<A": 1, A: 1, ">>^A": 1 });
+    assert.deepStrictEqual(evolve({ "<<A": 1 }), { "v<<A": 1, A: 1, ">>^A": 1 });
+    assert.deepStrictEqual(evolve({ "v>A": 1 }), { "<vA": 1, ">A": 1, "^A": 1 });
+    assert.deepStrictEqual(evolve({ ">>A": 1 }), { vA: 1, A: 1, "^A": 1 });
   });
 });

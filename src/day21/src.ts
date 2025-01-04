@@ -34,18 +34,48 @@ type Keypad = typeof numericKeypad;
 export function part1(input: string) {
   const result = input
     .split("\n")
-    .map((r) => finalProgramLength(r) * Number(r.slice(0, -1)))
+    .map((r) => {
+      const l = finalProgramLength(r);
+      console.log(l);
+      return l.v * Number(r.slice(0, -1));
+    })
     .reduce((acc, curr) => acc + curr);
 
-  console.log(result);
+  // const rows = input.split("\n");
+  // const result = finalProgramLength(rows[0]);
 
-  // Too high 166856
+  console.log(result);
 }
 
 export function part2(input: string) {
-  const result = 0;
+  let programs = [
+    "<vA<AA>>^AvA<^A>AAvA^A<vA^>Av<<A^>A>AvA^Av<<A>A^>AAvA<^A>Av<<A>A^>AvA<^A>A",
+    "<vA<AA>>^AvA<^A>AAvA^Av<<A>A^>AAvA<^A>Av<<A>>^AAAvA^Av<<A>A^>AAAvA^A<A>A",
+    "v<<A>>^AvA^A<vA<AA>>^AvA<^A>AAvA^Av<<A>A^>AvA^A<A>Av<<A>A^>AAvA<^A>A",
+    "v<<A>>^AA<vA<A>>^AAvAA<^A>A<vA^>A<A>A<vA^>Av<<A^>A>AvA^Av<<A>A^>AAAvA<^A>A",
+    "<vA<AA>>^AvA<^A>AvA^A<vA<AA>>^AvA<^A>AvA^A<vA^>AA<A>Av<<A>A^>AAvA<^A>A",
+  ].map(toState);
 
-  console.log(result);
+  for (let i = 0; i < 23; i++) {
+    programs = programs.map(evolve);
+  }
+
+  const v = [ 593,
+    508,
+    386,
+    459,
+    246,
+  ];
+
+  let sum = 0;
+  for (let i = 0; i < 5; i++) {
+    sum += v[i] * stateLength(programs[i]);
+  }
+  console.log(sum);
+
+  // too high 225887582184500
+  //          225887582184500
+  // too low  90239886870544
 }
 
 export function generatePermutations(arr: string[]): string[][] {
@@ -141,7 +171,7 @@ export function program(pattern: string, keypad: Keypad): string[] {
   return output;
 }
 
-export function finalProgramLength(input: string): number {
+export function finalProgramLength(input: string): { v: number, s: string } {
   const p1 = program(input, numericKeypad);
   const filteredP1 = filterShortestPrograms(p1);
   const p2 = filteredP1
@@ -159,10 +189,115 @@ export function filterShortestPrograms(programs: string[]): string[] {
   return programs.filter((p) => p.length === minLength);
 }
 
-function shortestStringLength(arr: string[]): number {
-  let min = Infinity;
+function shortestStringLength(arr: string[]): { v: number, s: string } {
+  const min = { v: Infinity, s: "" };
   for (const s of arr) {
-    min = s.length < min ? s.length : min;
+    if (s.length < min.v) {
+      min.v = s.length;
+      min.s = s;
+    }
   }
   return min;
+}
+
+const fromA = {
+  A: "A",
+  "^": "<A",
+  "<": "<<vA",
+  v: "v<A",
+  ">": "vA",
+} as const;
+
+const fromUp = {
+  A: ">A",
+  "^": "A",
+  "<": "v<A",
+  v: "vA",
+  ">": "v>A",
+} as const;
+
+const fromLeft = {
+  A: ">>^A",
+  "^": ">^A",
+  "<": "A",
+  v: ">A",
+  ">": ">>A",
+} as const;
+
+const fromDown = {
+  A: ">^A",
+  "^": "^A",
+  "<": "<A",
+  v: "A",
+  ">": ">A",
+} as const;
+
+const fromRight = {
+  A: "^A",
+  "^": "<^A",
+  "<": "<<A",
+  v: "<A",
+  ">": "A",
+} as const;
+
+const directional = {
+  A: fromA,
+  "^": fromUp,
+  "<": fromLeft,
+  v: fromDown,
+  ">": fromRight,
+};
+
+export function toState(p: string): Record<string, number> {
+  const state: Record<string, number> = {};
+
+  while (p.length) {
+    const firstA = p.indexOf("A");
+    const s = p.slice(0, firstA + 1);
+    state[s] ??= 0;
+    state[s] += 1;
+    p = p.slice(firstA + 1);
+  }
+
+  return state;
+}
+
+export function stateLength(state: Record<string, number>): number {
+  return Object.entries(state)
+    .reduce((acc, [ s, n ]) => acc + s.length * n, 0);
+}
+
+// < v ^ >
+const TOS: Record<string, string[]> = {
+  A: [ "A" ],
+  ">A": [ "vA", "^A" ],
+  "^>A": [ "vA", "<^A", ">A" ],
+  ">>^A": [ "vA", "A", "<^A", ">A" ],
+  "^A": [ "<A", ">A" ],
+  "<A": [ "v<<A", ">>^A" ],
+  "<^A": [ "v<<A", "^>A", ">A" ],
+  "<vA": [ "v<<A", ">A", "^>A" ],
+  vA: [ "<vA", "^>A" ],
+  "v<<A": [ "<vA", "<A", "A", ">>^A" ],
+  "<<A": [ "v<<A", "A", ">>^A" ],
+  "v>A": [ "<vA", ">A", "^A" ],
+  ">>A": [ "vA", "A", "^A" ],
+};
+
+export function evolve(state: Record<string, number>): Record<string, number> {
+  const result: Record<string, number> = {};
+
+  for (const [ s, n ] of Object.entries(state)) {
+    try {
+      TOS[s].forEach((to) => {
+        result[to] = (result[to] ?? 0) + n;
+      });
+    } catch (err) {
+      console.error("s is", s);
+      console.error(err);
+      throw err;
+    }
+  }
+
+  return result;
 }
